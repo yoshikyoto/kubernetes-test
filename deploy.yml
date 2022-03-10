@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: utakata-test-nginx
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: utakata-nginx
+  template:
+    metadata:
+      labels:
+        app: utakata-nginx
+    spec:
+      containers:
+      - name: utakata-test-nginx
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+          name: nginx-port
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: utakata-test-nginx-service
+spec:
+  selector:
+    app: utakata-nginx
+  type: NodePort # Kubernetesの外からアクセスできるようにする設定
+  ports:
+   - name: nginx-port
+     port: 8081
+     protocol: TCP
+     targetPort: nginx-port
